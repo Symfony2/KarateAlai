@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using KarateTournamentApp.Models;
 
 namespace KarateTournamentApp.ViewModels
@@ -35,7 +35,7 @@ namespace KarateTournamentApp.ViewModels
             get
             {
                 if (Winner == null) return "";
-                return Winner == _akaParticipant ? "AKA WYGRYWA!" : "SHIRO WYGRYWA!";
+                return Winner == _akaParticipant ? "ПОБЕЖДАЕТ АКА!" : "ПОБЕЖДАЕТ СИРО!";
             }
         }
 

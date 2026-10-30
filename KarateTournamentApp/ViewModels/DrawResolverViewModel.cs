@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Windows.Input;
 using KarateTournamentApp.Models;
 using KarateTournamentApp.Commands;
@@ -33,7 +33,7 @@ namespace KarateTournamentApp.ViewModels
 
         public bool IsWinnerSelected => Winner != null;
         
-        public string WinnerName => Winner != null ? $"{(Winner == _akaParticipant ? "AKA" : "SHIRO")} WYGRYWA!" : "";
+        public string WinnerName => Winner != null ? $"{(Winner == _akaParticipant ? "АКА" : "СИРО")} ПОБЕЖДАЕТ!" : "";
         
         public string WinnerColor => Winner == _akaParticipant ? "Red" : Winner == _shiroParticipant ? "White" : "Transparent";
 

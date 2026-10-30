@@ -1,4 +1,4 @@
-<UserControl x:Class="KarateTournamentApp.Views.DrawResolverScoreboardView"
+﻿<UserControl x:Class="KarateTournamentApp.Views.DrawResolverScoreboardView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -21,7 +21,7 @@
 
             <!-- Title -->
             <Border Grid.Row="0" Background="#2C2C2E" Padding="40">
-                <TextBlock Text="DOGRYWKA - POJEDYNEK 1v1" 
+                <TextBlock Text="ДОПОЛНИТЕЛЬНЫЙ ПОЕДИНОК 1×1" 
                            FontSize="72" 
                            FontWeight="Bold" 
                            Foreground="White" 
@@ -45,7 +45,7 @@
                         BorderBrush="#C0392B"
                         VerticalAlignment="Center">
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="AKA" 
+                        <TextBlock Text="АКА" 
                                    FontSize="120" 
                                    FontWeight="Bold" 
                                    Foreground="White" 
@@ -66,7 +66,7 @@
                 <Viewbox Grid.Column="1" 
                          VerticalAlignment="Center"
                          HorizontalAlignment="Center">
-                    <TextBlock Text="VS" 
+                    <TextBlock Text="ПРОТИВ" 
                                FontSize="120" 
                                FontWeight="Black" 
                                Foreground="#F39C12"/>
@@ -81,7 +81,7 @@
                         BorderBrush="#95A5A6"
                         VerticalAlignment="Center">
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="SHIRO" 
+                        <TextBlock Text="СИРО" 
                                    FontSize="120" 
                                    FontWeight="Bold" 
                                    Foreground="#2C3E50" 

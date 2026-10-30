@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using KarateTournamentApp.Models;
 
 namespace KarateTournamentApp.Services
@@ -29,19 +29,19 @@ namespace KarateTournamentApp.Services
                     || category.JudgingScores is null
                     || category.FinalResults is null)
                 {
-                    throw new InvalidDataException("Tournament data contains an incomplete category.");
+                    throw new InvalidDataException("Данные турнира содержат неполную категорию.");
                 }
 
                 if (category is TeamCategory teamCategory && teamCategory.Teams is null)
                 {
-                    throw new InvalidDataException($"Category '{category.Name}' has no team collection.");
+                    throw new InvalidDataException($"В категории «{category.Name}» отсутствует список команд.");
                 }
 
                 if (category.Participants.Any(participant => participant is null)
                     || category.BracketMatches.Any(match => match is null)
                     || category.FinalResults.Any(result => result is null || result.Participant is null))
                 {
-                    throw new InvalidDataException($"Category '{category.Name}' contains incomplete results or matches.");
+                    throw new InvalidDataException($"Категория «{category.Name}» содержит неполные результаты или поединки.");
                 }
             }
 
@@ -51,7 +51,7 @@ namespace KarateTournamentApp.Services
                 .ToList();
             if (teams.Any(team => team is null || team.Members is null || team.Members.Any(member => member is null)))
             {
-                throw new InvalidDataException("Tournament data contains an incomplete team or team member.");
+                throw new InvalidDataException("Данные турнира содержат неполную команду или участника команды.");
             }
 
             var participantObjects = categories
@@ -126,6 +126,13 @@ namespace KarateTournamentApp.Services
                     match.WinnerId = ResolveParticipantId(match.WinnerId, category, participantIdsByOriginalId, canonicalByIdentity);
                 }
 
+                if (category.ThirdPlaceMatch is { } thirdPlaceMatch)
+                {
+                    thirdPlaceMatch.Aka = ResolveParticipantId(thirdPlaceMatch.Aka, category, participantIdsByOriginalId, canonicalByIdentity);
+                    thirdPlaceMatch.Shiro = ResolveParticipantId(thirdPlaceMatch.Shiro, category, participantIdsByOriginalId, canonicalByIdentity);
+                    thirdPlaceMatch.WinnerId = ResolveParticipantId(thirdPlaceMatch.WinnerId, category, participantIdsByOriginalId, canonicalByIdentity);
+                }
+
                 for (var index = 0; index < category.JudgingScores.Count; index++)
                 {
                     var (scores, participantId) = category.JudgingScores[index];
@@ -162,7 +169,7 @@ namespace KarateTournamentApp.Services
         {
             if (participant.FirstName is null || participant.LastName is null || participant.Categories is null)
             {
-                throw new InvalidDataException("Tournament data contains a participant with incomplete identity details.");
+                throw new InvalidDataException("В данных турнира у спортсмена неполностью указаны идентификационные сведения.");
             }
 
             return new ParticipantIdentity(
@@ -190,13 +197,13 @@ namespace KarateTournamentApp.Services
             if (!participantIdsByOriginalId.TryGetValue(originalId.Value, out var identities))
             {
                 throw new InvalidDataException(
-                    $"Category '{category.Name}' refers to missing participant ID {originalId.Value}.");
+                    $"Категория «{category.Name}» ссылается на отсутствующего спортсмена с ID {originalId.Value}.");
             }
 
             if (identities.Count != 1)
             {
                 throw new InvalidDataException(
-                    $"Category '{category.Name}' has ambiguous legacy participant ID {originalId.Value}; its bracket or scores cannot be safely repaired.");
+                    $"В категории «{category.Name}» неоднозначный старый ID спортсмена {originalId.Value}; сетку или оценки невозможно безопасно восстановить.");
             }
 
             return canonicalByIdentity[identities[0]].Id;

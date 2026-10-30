@@ -1,41 +1,41 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using KarateClassLibrary;
 
 namespace KarateTournament.Api.Contracts;
 
 public sealed record CreateCategoryRequest(
-    [property: Required] string? Name,
-    [property: Range(0, int.MaxValue)] int? MinAge,
-    [property: Range(0, int.MaxValue)] int? MaxAge,
-    [property: Required, EnumDataType(typeof(Sex))] Sex? Sex,
-    [property: Required, EnumDataType(typeof(CategoryType))] CategoryType? CategoryType,
-    [property: Required, MinLength(1)] Belts[]? AllowedBelts,
-    [property: Required] int[]? ParticipantIds) : IValidatableObject
+    [property: Required(ErrorMessage = "Название категории обязательно.")] string? Name,
+    [property: Range(0, int.MaxValue, ErrorMessage = "Минимальный возраст должен быть неотрицательным.")] int? MinAge,
+    [property: Range(0, int.MaxValue, ErrorMessage = "Максимальный возраст должен быть неотрицательным.")] int? MaxAge,
+    [property: Required(ErrorMessage = "Пол обязателен."), EnumDataType(typeof(Sex), ErrorMessage = "Недопустимое значение пола.")] Sex? Sex,
+    [property: Required(ErrorMessage = "Тип категории обязателен."), EnumDataType(typeof(CategoryType), ErrorMessage = "Недопустимый тип категории.")] CategoryType? CategoryType,
+    [property: Required(ErrorMessage = "Список поясов обязателен."), MinLength(1, ErrorMessage = "Укажите хотя бы один пояс.")] Belts[]? AllowedBelts,
+    [property: Required(ErrorMessage = "Список спортсменов обязателен.")] int[]? ParticipantIds) : IValidatableObject
 {
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         if (MinAge.HasValue && MaxAge.HasValue && MinAge > MaxAge)
             yield return new ValidationResult(
-                "Minimum age must not exceed maximum age.", [nameof(MinAge), nameof(MaxAge)]);
+                "Минимальный возраст не может превышать максимальный.", [nameof(MinAge), nameof(MaxAge)]);
 
         if (AllowedBelts is not null)
         {
             if (AllowedBelts.Any(belt => !Enum.IsDefined(belt)))
                 yield return new ValidationResult(
-                    "Allowed belts must contain only supported values.", [nameof(AllowedBelts)]);
+                    "Список поясов содержит недопустимые значения.", [nameof(AllowedBelts)]);
             if (AllowedBelts.Distinct().Count() != AllowedBelts.Length)
                 yield return new ValidationResult(
-                    "Allowed belts must not contain duplicates.", [nameof(AllowedBelts)]);
+                    "Список поясов не должен содержать повторов.", [nameof(AllowedBelts)]);
         }
 
         if (ParticipantIds is not null)
         {
             if (ParticipantIds.Any(id => id <= 0))
                 yield return new ValidationResult(
-                    "Participant IDs must be positive.", [nameof(ParticipantIds)]);
+                    "Идентификаторы спортсменов должны быть положительными.", [nameof(ParticipantIds)]);
             if (ParticipantIds.Distinct().Count() != ParticipantIds.Length)
                 yield return new ValidationResult(
-                    "Participant IDs must not contain duplicates.", [nameof(ParticipantIds)]);
+                    "Идентификаторы спортсменов не должны повторяться.", [nameof(ParticipantIds)]);
         }
     }
 }

@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using KarateTournament.Api.Contracts;
 using KarateTournament.Api.Data;
 using KarateTournament.Api.Entities;
@@ -29,7 +29,7 @@ public static class ParticipantEndpoints
                 .SelectMany(result => result.MemberNames.Select(member => new
                 {
                     Member = member,
-                    Message = result.ErrorMessage ?? "Invalid value."
+                    Message = result.ErrorMessage ?? "Недопустимое значение."
                 }))
                 .GroupBy(error => error.Member)
                 .ToDictionary(group => group.Key, group => group.Select(error => error.Message).ToArray());

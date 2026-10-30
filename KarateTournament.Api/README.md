@@ -1,102 +1,68 @@
-# KarateTournament API - local database
+﻿# API турнира по карате — локальная база данных
 
-The API uses PostgreSQL. The database is available only on the local machine by default.
+API использует PostgreSQL. По умолчанию база данных доступна только на локальном компьютере.
 
-## Start PostgreSQL
+## Запуск PostgreSQL
 
-From the repository root, copy `.env.example` to `.env`, replace the sample password, then run:
+Из корневой папки репозитория скопируйте `.env.example` в `.env`, замените тестовый пароль и запустите:
 
 ```powershell
 docker compose up -d
 ```
 
-## Configure the API
+## Настройка API
 
-Store the connection string in .NET user secrets. Use the same password as in `.env`:
+Сохраните строку подключения в секретах пользователя .NET. Используйте тот же пароль, что и в `.env`:
 
 ```powershell
-dotnet user-secrets set "ConnectionStrings:TournamentDatabase" "Host=localhost;Port=55432;Database=karate_tournament;Username=karate_app;Password=replace-with-a-local-password" --project .\KarateTournament.Api\KarateTournament.Api.csproj
+dotnet user-secrets set "ConnectionStrings:TournamentDatabase" "Host=localhost;Port=55432;Database=karate_tournament;Username=karate_app;Password=123" --project .\KarateTournament.Api\KarateTournament.Api.csproj
 dotnet run --project .\KarateTournament.Api\KarateTournament.Api.csproj
 ```
 
-For deployment, provide `ConnectionStrings__TournamentDatabase` as an environment variable instead.
+При развёртывании передайте `ConnectionStrings__TournamentDatabase` через переменную окружения.
 
-Check database connectivity at `https://localhost:7086/health/database`. The endpoint returns `503` when PostgreSQL cannot be reached.
+Проверить соединение с базой можно по адресу `https://localhost:7086/health/database`. Если PostgreSQL недоступен, endpoint вернёт `503`.
 
-On startup, the API creates the EF Core schema when the database is empty. The model
-maps categories, participants, teams, bracket matches, results, and individual judge
-scores. Ordered relationships preserve participant, team, bracket, and judge-score
-ordering. Each database represents one tournament.
+При запуске API создаёт схему EF Core, если база данных пуста. Модель включает категории, спортсменов, команды, поединки сетки, результаты и оценки отдельных судей. Порядок элементов сохраняется. Каждая база данных соответствует одному турниру.
 
-Schema setup uses `EnsureCreated`; it does not run EF Core migrations or update an
-existing schema. Future model changes will need an explicit schema-upgrade strategy.
+Настройка схемы выполняется через `EnsureCreated`: миграции EF Core не запускаются, а существующая схема не обновляется. Для будущих изменений модели потребуется отдельная стратегия обновления схемы.
 
-## Read the tournament snapshot
+## Получение снимка турнира
 
-`GET /api/tournament` returns all participants and categories, including ordered
-category members, belts, bracket matches, teams, final results, and judge scores.
-The endpoint reads these related records from one consistent database snapshot.
-WPF integration will be added in later steps.
+`GET /api/tournament` возвращает всех спортсменов и категории, включая участников категорий, пояса, поединки сетки, команды, итоговые результаты и оценки судей. Связанные записи читаются в рамках одного согласованного снимка базы данных.
 
-## Create a participant
+## Создание спортсмена
 
-`POST /api/participants` accepts firstName, lastName, age, optional club, belt,
-sex, and a non-empty categoryTypes array. Enums use their numeric values from
-KarateClassLibrary. Names must not be blank, age must be non-negative, enum
-values must be defined, and category types must not repeat. Invalid data returns
-400 with field errors. Names and club are trimmed; an empty club is stored as null.
+`POST /api/participants` принимает `firstName`, `lastName`, `age`, необязательное поле `club`, `belt`, `sex` и непустой массив `categoryTypes`. Перечисления передаются числовыми значениями, заданными в `KarateClassLibrary`. Имя и фамилия не должны быть пустыми; возраст должен быть неотрицательным; значения перечислений должны существовать, а типы категорий не должны повторяться. При некорректных данных API возвращает `400` с ошибками по полям. Имя, фамилия и клуб обрезаются по краям; пустой клуб сохраняется как `null`.
 
-The database assigns the ID. A single SaveChanges operation atomically saves the
-participant and their category types. The response is 201 with ParticipantDto and
-a Location header pointing to `GET /api/participants/{id}` (404 if not found).
-Category types declare disciplines; this endpoint does not assign categories or
-generate brackets. Participants with identical names are allowed.
+Идентификатор создаёт база данных. Спортсмен и его дисциплины сохраняются одной атомарной операцией `SaveChanges`. Ответ — `201` с `ParticipantDto` и заголовком `Location`, ведущим на `GET /api/participants/{id}`. Дисциплины обозначают виды соревнований: этот endpoint не распределяет спортсменов по категориям и не строит сетки. Участники с одинаковыми именами разрешены.
 
-Run validation tests with:
+Запуск тестов валидации:
 
 ```powershell
 dotnet test .\KarateTournament.Api.Tests\KarateTournament.Api.Tests.csproj
 ```
 
-For a PostgreSQL smoke test, start the API with the https launch profile and use
-KarateTournament.Api.http. Verify POST returns 201, GET by the returned ID and
-GET /api/tournament contain the participant, and the data survives an API restart.
-Also verify an invalid request returns 400 without adding a participant.
+Для быстрой проверки PostgreSQL запустите API с HTTPS-профилем и используйте `KarateTournament.Api.http`. Проверьте, что `POST` возвращает `201`, `GET` по полученному ID и `GET /api/tournament` содержат спортсмена, а данные сохраняются после перезапуска API. Некорректный запрос должен вернуть `400` и не добавлять спортсмена.
 
-## Create a category
+## Создание категории
 
-`POST /api/categories` accepts name, optional minAge/maxAge, sex, categoryType,
-a non-empty allowedBelts array, and participantIds (which may be empty).
-Age bounds must be non-negative and minAge must not exceed maxAge. Enums must be
-defined, belts and participant IDs must not repeat, and participant IDs must be
-positive and exist in the database. Invalid input returns 400 with field errors.
+`POST /api/categories` принимает `name`, необязательные `minAge`/`maxAge`, `sex`, `categoryType`, непустой массив `allowedBelts` и `participantIds` (он может быть пустым). Возрастные границы должны быть неотрицательными, а минимальный возраст не может превышать максимальный. Значения перечислений должны существовать; пояса и идентификаторы участников не должны повторяться; ID участников должны быть положительными и существовать в базе. При ошибке API возвращает `400` с описанием полей.
 
-The database assigns the category ID. One SaveChanges operation atomically saves
-the category, its belts and memberships in request order. The response is 201
-with CategoryDto; Location points to `/api/categories/{id}`, where the new category can
-be read. A category starts unfinished, with no matches, teams or results.
-Assignments are explicit: this operation does not automatically group participants
-or check eligibility by age, sex, belt or discipline. It does not generate brackets.
+Идентификатор категории создаёт база данных. Одна операция `SaveChanges` атомарно сохраняет категорию, её пояса и участников в указанном порядке. Ответ — `201` с `CategoryDto`; заголовок `Location` указывает на `/api/categories/{id}`, где можно прочитать созданную категорию. Новая категория не завершена и не содержит поединков, команд или результатов.
 
-For a PostgreSQL smoke test, create a participant and then a category using its ID.
-Verify the snapshot contains the category with the requested member/belt order.
-An unknown participant ID must return 400 and leave no partially created category.
+Назначение участников выполняется явно: этот endpoint сам не группирует спортсменов и не проверяет допуск по возрасту, полу, поясу или дисциплине. Сетку он также не строит.
 
-## Read categories
+Для быстрой проверки PostgreSQL сначала создайте спортсмена, а затем категорию с его ID. Убедитесь, что снимок содержит категорию и участников/пояса в ожидаемом порядке. Неизвестный ID участника должен привести к `400`, при этом частично созданной категории в базе быть не должно.
 
-`GET /api/categories` returns summaries ordered by ID: name, discipline, sex,
-age bounds, completion flag, participant count and team count. It returns `[]`
-when there are no categories. The query does not load brackets or results.
+## Чтение категорий
 
-`GET /api/categories/{id}` returns a full CategoryDto, or 404 if it does not exist.
-It uses the same mapping and ordering as `/api/tournament`. Related collections
-are loaded with split queries in a repeatable-read transaction for a consistent
-snapshot. This is a read operation; it does not claim or lock the category.
+`GET /api/categories` возвращает сводные данные, отсортированные по ID: название, дисциплина, пол, возрастные границы, признак завершения, число спортсменов и число команд. Если категорий нет, возвращается `[]`. Запрос не загружает сетки и результаты.
 
-## Automated integration tests
+`GET /api/categories/{id}` возвращает полный `CategoryDto` или `404`, если категория отсутствует. Используется то же сопоставление данных и тот же порядок, что и в `/api/tournament`. Связанные коллекции загружаются отдельными запросами в транзакции `repeatable read`, чтобы получить согласованный снимок. Это операция чтения: она не блокирует категорию.
 
-Start Docker Desktop (Linux containers), then run `dotnet test KarateTournament.Api.Tests`.
-Tests marked `Category=Integration` start an isolated PostgreSQL 17 container per test,
-bound to loopback, and run the API through WebApplicationFactory. No local tournament
-database or user secrets are needed. Containers are disposed after each test.
-To run only tests without Docker, add `--filter "Category!=Integration"`.
+## Интеграционные тесты
+
+Запустите Docker Desktop с Linux-контейнерами, затем выполните `dotnet test KarateTournament.Api.Tests`. Тесты с категорией `Category=Integration` создают отдельный контейнер PostgreSQL 17 для каждого теста, привязанный к loopback, и запускают API через `WebApplicationFactory`. Локальная база турнира и пользовательские секреты не нужны; контейнеры удаляются после завершения тестов.
+
+Чтобы запустить только тесты, которым не нужен Docker, добавьте `--filter "Category!=Integration"`.

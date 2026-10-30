@@ -40,7 +40,7 @@ namespace KarateTournamentApp.Services
 
             string jsonString = await File.ReadAllTextAsync(filePath);
             var categories = JsonSerializer.Deserialize<List<Category>>(jsonString, GetOptions())
-                ?? throw new InvalidDataException("The tournament JSON file does not contain a category list.");
+                ?? throw new InvalidDataException("Файл JSON турнира не содержит списка категорий.");
             TournamentIdentityNormalizer.Normalize(categories);
             return categories;
         }

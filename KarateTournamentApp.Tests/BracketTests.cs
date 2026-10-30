@@ -1,4 +1,4 @@
-using KarateTournamentApp.Models;
+﻿using KarateTournamentApp.Models;
 using Xunit;
 
 namespace KarateTournamentApp.Tests;
@@ -87,6 +87,26 @@ public class BracketTests
         category.PromoteWinner(0);
         Assert.True(category.IsFinished);
         Assert.Equal(42, category.BracketMatches[0].WinnerId);
+    }
+
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void ReinitializingBracketClearsPreviousMedalResults(bool shobu)
+    {
+        Category category = shobu ? new ShobuSanbonCategory() : new Category();
+        var first = new Participant { Id = 42 };
+        var second = new Participant { Id = 43 };
+        category.Participants.Add(first);
+        category.Participants.Add(second);
+        category.FinalResults = [new ParticipantResult { Participant = first, Score = 1 }];
+
+        category.InitializeBracket();
+
+        Assert.Empty(category.FinalResults);
+        Assert.Null(category.ThirdPlaceMatch);
+        Assert.False(category.IsFinished);
     }
 
     [Theory]

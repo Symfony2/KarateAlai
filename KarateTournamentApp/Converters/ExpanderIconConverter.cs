@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
 
@@ -10,9 +10,9 @@ namespace KarateTournamentApp.Converters
         {
             if (value is bool isExpanded)
             {
-                return isExpanded ? "Zwi�" : "Rozwi�";
+                return isExpanded ? "Свернуть" : "Развернуть";
             }
-            return "Zwi�";
+            return "Свернуть";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

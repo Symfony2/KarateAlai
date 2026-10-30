@@ -1,4 +1,4 @@
-using System.Data;
+﻿using System.Data;
 using System.ComponentModel.DataAnnotations;
 using KarateTournament.Api.Contracts;
 using KarateTournament.Api.Data;
@@ -58,7 +58,7 @@ public static class CategoryEndpoints
                 .SelectMany(result => result.MemberNames.Select(member => new
                 {
                     Member = member,
-                    Message = result.ErrorMessage ?? "Invalid value."
+                    Message = result.ErrorMessage ?? "Недопустимое значение."
                 }))
                 .GroupBy(error => error.Member)
                 .ToDictionary(group => group.Key, group => group.Select(error => error.Message).ToArray());
@@ -74,7 +74,7 @@ public static class CategoryEndpoints
         if (missingIds.Length > 0)
             return Results.ValidationProblem(new Dictionary<string, string[]>
             {
-                [nameof(request.ParticipantIds)] = [$"Unknown participant IDs: {string.Join(", ", missingIds)}."]
+                [nameof(request.ParticipantIds)] = [$"Неизвестные идентификаторы спортсменов: {string.Join(", ", missingIds)}."]
             });
 
         var category = new Category

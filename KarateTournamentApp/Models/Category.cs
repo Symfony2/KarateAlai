@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices.JavaScript;
 using System.Security.Policy;
 using System.Text;
 using System.Text.Json.Serialization;
+using KarateTournamentApp.Localization;
 
 namespace KarateTournamentApp.Models
 {
@@ -27,28 +28,42 @@ namespace KarateTournamentApp.Models
         public ObservableCollection<Participant> Participants { get; set; } = new ObservableCollection<Participant>();
         public List<Belts> AllowedBelts { get; set; } = new List<Belts> { };
         public List<Match> BracketMatches { get; set; } = new List<Match>();
+        /// <summary>Optional bronze-medal bout between the two semifinal losers.</summary>
+        public Match? ThirdPlaceMatch { get; set; }
         public int? MinAge { get; set; }
         public int? MaxAge { get; set; }
+        public decimal? MinWeightKg { get; set; }
+        public decimal? MaxWeightKg { get; set; }
+        public string? AgeGroupLabel { get; set; }
+        public string? WeightGroupLabel { get; set; }
         public bool IsFinished { get; set; } = false;
         public Sex Sex { get; set; }
         public CategoryType CategoryType { get; set; }
         public List<(List<decimal> Scores, int ParticipantId)> JudgingScores { get; set; } = new List<(List<decimal>, int)>();
         public List<ParticipantResult> FinalResults { get; set; } = new List<ParticipantResult>();
 
-        public Category(Belts belt, CategoryType type, Sex sex = Sex.Unisex, int? minAge = null, int? maxAge = null)
+        public Category(Belts belt, CategoryType type, Sex sex = Sex.Unisex, int? minAge = null, int? maxAge = null, decimal? minWeightKg = null, decimal? maxWeightKg = null, string? ageGroupLabel = null, string? weightGroupLabel = null)
         {
             MinAge = minAge;
             MaxAge = maxAge;
+            MinWeightKg = minWeightKg;
+            MaxWeightKg = maxWeightKg;
+            AgeGroupLabel = ageGroupLabel;
+            WeightGroupLabel = weightGroupLabel;
             AllowedBelts.Add(belt);
             Sex = sex;
             CategoryType = type;
             GenerateName();
         }
 
-        public Category(List<Belts> belts, CategoryType type, Sex sex = Sex.Unisex, int? minAge = null, int? maxAge = null)
+        public Category(List<Belts> belts, CategoryType type, Sex sex = Sex.Unisex, int? minAge = null, int? maxAge = null, decimal? minWeightKg = null, decimal? maxWeightKg = null, string? ageGroupLabel = null, string? weightGroupLabel = null)
         {
             MinAge = minAge;
             MaxAge = maxAge;
+            MinWeightKg = minWeightKg;
+            MaxWeightKg = maxWeightKg;
+            AgeGroupLabel = ageGroupLabel;
+            WeightGroupLabel = weightGroupLabel;
             AllowedBelts = belts ?? new List<Belts>();
             Sex = sex;
             CategoryType = type;
@@ -59,15 +74,29 @@ namespace KarateTournamentApp.Models
         {
         }
 
-        private void GenerateName()
+        protected void GenerateName()
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Append($"{MinAge}-{MaxAge}");
-            foreach(var belt in AllowedBelts)
+            var parts = new List<string>
             {
-                sb.Append($", {belt}");
+                AgeGroupLabel ?? (MinAge.HasValue || MaxAge.HasValue ? RussianText.FormatAgeRange(MinAge, MaxAge) : "Все возраста")
+            };
+
+            // Do not flood the category title with every belt when belt splitting is disabled.
+            if (AllowedBelts.Count == 1)
+            {
+                parts.Add(RussianText.Belt(AllowedBelts[0]));
             }
-            Name = sb.ToString();
+
+            if (!string.IsNullOrWhiteSpace(WeightGroupLabel))
+            {
+                parts.Add(WeightGroupLabel);
+            }
+            else if (MinWeightKg.HasValue || MaxWeightKg.HasValue)
+            {
+                parts.Add($"{MinWeightKg?.ToString("0.##") ?? "0"}–{MaxWeightKg?.ToString("0.##") ?? "∞"} кг");
+            }
+
+            Name = string.Join(" · ", parts.Where(part => !string.IsNullOrWhiteSpace(part)));
         }
         /// <summary>
         /// Combines the passed category with the current one.
@@ -83,8 +112,18 @@ namespace KarateTournamentApp.Models
                 }
             }
             if (Sex != otherCategory.Sex) Sex = Sex.Unisex;
-            if (otherCategory.MinAge < this.MinAge) this.MinAge = otherCategory.MinAge;
-            if (otherCategory.MaxAge > this.MaxAge) this.MaxAge = otherCategory.MaxAge;
+            // Null boundaries mean an open-ended range. The union remains open-ended
+            // whenever either source range has an open boundary.
+            MinAge = MinAge.HasValue && otherCategory.MinAge.HasValue
+                ? Math.Min(MinAge.Value, otherCategory.MinAge.Value) : null;
+            MaxAge = MaxAge.HasValue && otherCategory.MaxAge.HasValue
+                ? Math.Max(MaxAge.Value, otherCategory.MaxAge.Value) : null;
+            MinWeightKg = MinWeightKg.HasValue && otherCategory.MinWeightKg.HasValue
+                ? Math.Min(MinWeightKg.Value, otherCategory.MinWeightKg.Value) : null;
+            MaxWeightKg = MaxWeightKg.HasValue && otherCategory.MaxWeightKg.HasValue
+                ? Math.Max(MaxWeightKg.Value, otherCategory.MaxWeightKg.Value) : null;
+            if (WeightGroupLabel != otherCategory.WeightGroupLabel) WeightGroupLabel = null;
+            if (AgeGroupLabel != otherCategory.AgeGroupLabel) AgeGroupLabel = null;
 
             foreach (var belt in otherCategory.AllowedBelts)
             {
@@ -93,14 +132,7 @@ namespace KarateTournamentApp.Models
                     AllowedBelts.Add(belt);
                 }
             }
-            if (MinAge >= 18)
-            {
-                Name = "Senior";
-            }
-            else
-            {
-                GenerateName();
-            }
+            GenerateName();
         }
 
         public void PromoteWinner(int currentMatchIndex)
@@ -115,12 +147,58 @@ namespace KarateTournamentApp.Models
                 BracketMatches[parentIndex].Shiro = winnerId;
         }
 
+        /// <summary>Creates the bronze-medal bout once both semifinals have real winners and losers.</summary>
+        public void EnsureThirdPlaceMatch()
+        {
+            if (ThirdPlaceMatch != null || BracketMatches.Count < 3)
+            {
+                return;
+            }
+
+            var firstSemifinal = BracketMatches[1];
+            var secondSemifinal = BracketMatches[2];
+            var firstLoser = GetLoser(firstSemifinal);
+            var secondLoser = GetLoser(secondSemifinal);
+
+            if (!firstLoser.HasValue || !secondLoser.HasValue || firstLoser == secondLoser)
+            {
+                return;
+            }
+
+            ThirdPlaceMatch = BracketMatches.Any(match => match is ShobuSanbonMatch)
+                ? new ShobuSanbonMatch(firstLoser, secondLoser)
+                : new Match(firstLoser, secondLoser);
+        }
+
+        private static int? GetLoser(Match match)
+        {
+            if (!match.IsFinished || !match.WinnerId.HasValue || !match.Aka.HasValue || !match.Shiro.HasValue)
+            {
+                return null;
+            }
+
+            if (match.WinnerId == match.Aka)
+            {
+                return match.Shiro;
+            }
+
+            if (match.WinnerId == match.Shiro)
+            {
+                return match.Aka;
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Initializes a bracket, semi-randomly
         /// </summary>
         public virtual void InitializeBracket()
         {
             BracketMatches = new List<Match>();
+            ThirdPlaceMatch = null;
+            FinalResults = new List<ParticipantResult>();
+            IsFinished = false;
             var size = Participants.Count;
 
             if (size <= 2)
@@ -189,11 +267,11 @@ namespace KarateTournamentApp.Models
 
     public class ShobuSanbonCategory : Category
     {
-        public ShobuSanbonCategory(Belts belt, CategoryType type,  Sex sex = Sex.Unisex, int? minAge = null, int? maxAge = null) : base(belt, type, sex, minAge, maxAge)
+        public ShobuSanbonCategory(Belts belt, CategoryType type,  Sex sex = Sex.Unisex, int? minAge = null, int? maxAge = null, decimal? minWeightKg = null, decimal? maxWeightKg = null, string? ageGroupLabel = null, string? weightGroupLabel = null) : base(belt, type, sex, minAge, maxAge, minWeightKg, maxWeightKg, ageGroupLabel, weightGroupLabel)
         {  
         }
 
-        public ShobuSanbonCategory(List<Belts> belts, CategoryType type, Sex sex = Sex.Unisex, int? minAge = null, int? maxAge = null) : base(belts, type, sex, minAge, maxAge)
+        public ShobuSanbonCategory(List<Belts> belts, CategoryType type, Sex sex = Sex.Unisex, int? minAge = null, int? maxAge = null, decimal? minWeightKg = null, decimal? maxWeightKg = null, string? ageGroupLabel = null, string? weightGroupLabel = null) : base(belts, type, sex, minAge, maxAge, minWeightKg, maxWeightKg, ageGroupLabel, weightGroupLabel)
         {
         }
 
@@ -206,6 +284,9 @@ namespace KarateTournamentApp.Models
         public override void InitializeBracket()
         {
             BracketMatches = new List<Match>();
+            ThirdPlaceMatch = null;
+            FinalResults = new List<ParticipantResult>();
+            IsFinished = false;
             var size = Participants.Count;
 
             if (size <= 2)
@@ -278,11 +359,17 @@ namespace KarateTournamentApp.Models
         }
         private void GenerateName()
         {
+            if (MinAge >= 18)
+            {
+                Name = "Командное ката — взрослые";
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
-            sb.Append($"Team Kata {MinAge}-{MaxAge}");
+            sb.Append($"Командное ката, {RussianText.FormatAgeRange(MinAge, MaxAge)}");
             foreach (var belt in AllowedBelts)
             {
-                sb.Append($", {belt}");
+                sb.Append($", {RussianText.Belt(belt)}");
             }
             Name = sb.ToString();
         }
@@ -300,8 +387,10 @@ namespace KarateTournamentApp.Models
                 }
             }
             if (Sex != otherCategory.Sex) Sex = Sex.Unisex;
-            if (otherCategory.MinAge < this.MinAge) this.MinAge = otherCategory.MinAge;
-            if (otherCategory.MaxAge > this.MaxAge) this.MaxAge = otherCategory.MaxAge;
+            MinAge = MinAge.HasValue && otherCategory.MinAge.HasValue
+                ? Math.Min(MinAge.Value, otherCategory.MinAge.Value) : null;
+            MaxAge = MaxAge.HasValue && otherCategory.MaxAge.HasValue
+                ? Math.Max(MaxAge.Value, otherCategory.MaxAge.Value) : null;
 
             foreach (var belt in otherCategory.AllowedBelts)
             {
@@ -312,7 +401,7 @@ namespace KarateTournamentApp.Models
             }
             if (MinAge >= 18)
             {
-                Name = "Senior Team Kata";
+                Name = "Командное ката — взрослые";
             }
             else
             {

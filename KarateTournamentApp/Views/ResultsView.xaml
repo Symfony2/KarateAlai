@@ -23,7 +23,7 @@
         <!-- Header -->
         <Border Grid.Row="0" Background="#2C3E50" CornerRadius="5" Padding="20" Margin="0,0,0,20">
             <StackPanel>
-                <TextBlock Text="Wyniki Koncowe" 
+                <TextBlock Text="Итоговые результаты" 
                            FontSize="28" 
                            FontWeight="Bold" 
                            Foreground="White"
@@ -108,7 +108,7 @@
                                             Padding="15,10"
                                             Margin="15,0">
                                         <StackPanel>
-                                            <TextBlock Text="WYNIK" 
+                                            <TextBlock Text="БАЛЛ" 
                                                        FontSize="12" 
                                                        Foreground="White"
                                                        HorizontalAlignment="Center"/>
@@ -122,7 +122,7 @@
 
                                     <!-- Judge Scores -->
                                     <StackPanel Grid.Column="3" VerticalAlignment="Center">
-                                        <TextBlock Text="Oceny:" 
+                                        <TextBlock Text="Оценки:" 
                                                    FontSize="12" 
                                                    Foreground="#7f8c8d"
                                                    Margin="0,0,0,5"/>

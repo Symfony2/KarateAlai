@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -159,7 +159,7 @@ namespace KarateTournamentApp.Commands
                 if (!TryGetParameter(parameter, out var typedParameter))
                 {
                     throw new ArgumentException(
-                        $"Expected a command parameter of type {typeof(T).Name}.",
+                        $"Ожидался параметр команды типа {typeof(T).Name}.",
                         nameof(parameter));
                 }
 

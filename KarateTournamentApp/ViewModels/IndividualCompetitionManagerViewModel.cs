@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -178,7 +178,7 @@ namespace KarateTournamentApp.ViewModels
 
             var scoreboardHandle = _windowService.Show(scoreboardViewModel, new WindowOptions
             {
-                Title = "DOGRYWKA - PUBLICZNA TABLICA",
+                Title = "ДОПОЛНИТЕЛЬНЫЙ ПОЕДИНОК — ТАБЛО",
                 Width = 1920,
                 Height = 1080,
                 SizeState = WindowSizeState.Maximized,
@@ -201,7 +201,7 @@ namespace KarateTournamentApp.ViewModels
 
             _windowService.ShowDialog(drawResolver, new WindowOptions
             {
-                Title = "Rozstrzyganie Remisu - Panel Sedziego",
+                Title = "Разрешение ничьей — панель судьи",
                 Width = 800,
                 Height = 600,
                 StartupPosition = WindowStartupPosition.CenterScreen,
@@ -222,7 +222,7 @@ namespace KarateTournamentApp.ViewModels
 
             var results = new ObservableCollection<ParticipantResult>(Results.OrderByDescending(r => r.Score));
             
-            System.Diagnostics.Debug.WriteLine($"GetFinalRankings called. Total results: {results.Count}");
+            System.Diagnostics.Debug.WriteLine($"Расчёт итогового рейтинга. Всего результатов: {results.Count}");
             
             if (results.Count >= 2)
             {
@@ -252,7 +252,7 @@ namespace KarateTournamentApp.ViewModels
             }
 
             System.Diagnostics.Debug.WriteLine(
-                $"Draw detected between {first.Participant.FullName} and {second.Participant.FullName}");
+                $"Обнаружена ничья между {first.Participant.FullName} и {second.Participant.FullName}");
 
             var firstScores = first.JudgeScores.OrderBy(score => score).ToList();
             var secondScores = second.JudgeScores.OrderBy(score => score).ToList();
@@ -283,7 +283,7 @@ namespace KarateTournamentApp.ViewModels
 
             if (lowestScoreComparison == 0)
             {
-                System.Diagnostics.Debug.WriteLine("Still tied - opening DrawResolver window");
+                System.Diagnostics.Debug.WriteLine("Ничья сохраняется — открывается окно разрешения ничьей");
                 var winner = ResolveDraw(first, second);
                 if (winner == second)
                 {

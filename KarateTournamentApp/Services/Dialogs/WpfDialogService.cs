@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
 
@@ -24,7 +24,7 @@ namespace KarateTournamentApp.Services.Dialogs
 
             var okButton = new Button
             {
-                Content = "Zapisz",
+                Content = "Сохранить",
                 IsDefault = true,
                 Width = 90,
                 Margin = new Thickness(0, 0, 8, 0)
@@ -32,7 +32,7 @@ namespace KarateTournamentApp.Services.Dialogs
 
             var cancelButton = new Button
             {
-                Content = "Anuluj",
+                Content = "Отмена",
                 IsCancel = true,
                 Width = 90
             };

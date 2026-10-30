@@ -1,12 +1,54 @@
-<UserControl x:Class="KarateTournamentApp.Views.BracketView"
+﻿<UserControl x:Class="KarateTournamentApp.Views.BracketView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:KarateTournamentApp.Views"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <TextBlock Text="Widok Drabinki" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"/>
-    </Grid>
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="430" d:DesignWidth="1200"
+             Background="#101827">
+    <Border Background="#121E30"
+            BorderBrush="#26364D"
+            BorderThickness="1"
+            CornerRadius="14"
+            Padding="14">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="4,0,4,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="ТУРНИРНАЯ СЕТКА"
+                               Foreground="#F4F7FB"
+                               FontSize="17"
+                               FontWeight="Bold"/>
+                    <TextBlock Text="{Binding CategoryName}"
+                               Foreground="#91A4BD"
+                               FontSize="12"
+                               Margin="0,2,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="#A9323A" CornerRadius="4" Padding="7,3" Margin="0,0,6,0">
+                        <TextBlock Text="AKA" Foreground="White" FontSize="9" FontWeight="Bold"/>
+                    </Border>
+                    <Border Background="#E5EAF1" CornerRadius="4" Padding="7,3" Margin="0,0,12,0">
+                        <TextBlock Text="СИРО" Foreground="#243247" FontSize="9" FontWeight="Bold"/>
+                    </Border>
+                    <Ellipse Width="8" Height="8" Fill="#F5C451" Margin="0,0,5,0"/>
+                    <TextBlock Text="Текущий поединок" Foreground="#A9B8CA" FontSize="10"/>
+                </StackPanel>
+            </Grid>
+
+            <Canvas x:Name="BracketCanvas"
+                    Grid.Row="1"
+                    ClipToBounds="True"
+                    Background="Transparent"
+                    SizeChanged="BracketCanvas_OnSizeChanged"/>
+        </Grid>
+    </Border>
 </UserControl>

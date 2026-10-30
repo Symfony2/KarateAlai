@@ -1,4 +1,4 @@
-<UserControl x:Class="KarateTournamentApp.Views.DrawResolverView"
+﻿<UserControl x:Class="KarateTournamentApp.Views.DrawResolverView"
          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -20,7 +20,7 @@
 
         <!-- Title -->
         <Border Grid.Row="0" Background="#34495E" Padding="20">
-            <TextBlock Text="ROZSTRZYGANIE REMISU - POJEDYNEK 1v1" 
+            <TextBlock Text="РАЗРЕШЕНИЕ НИЧЬЕЙ — ПОЕДИНОК 1×1" 
                        FontSize="32" 
                        FontWeight="Bold" 
                        Foreground="White" 
@@ -43,7 +43,7 @@
                     BorderThickness="5"
                     BorderBrush="#C0392B">
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="AKA" 
+                    <TextBlock Text="АКА" 
                                FontSize="48" 
                                FontWeight="Bold" 
                                Foreground="White" 
@@ -61,7 +61,7 @@
 
             <!-- VS -->
             <TextBlock Grid.Column="1" 
-                       Text="VS" 
+                       Text="ПРОТИВ" 
                        FontSize="56" 
                        FontWeight="Bold" 
                        Foreground="White" 
@@ -76,7 +76,7 @@
                     BorderThickness="5"
                     BorderBrush="#BDC3C7">
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="SHIRO" 
+                    <TextBlock Text="СИРО" 
                                FontSize="48" 
                                FontWeight="Bold" 
                                Foreground="#2C3E50" 
@@ -118,7 +118,7 @@
                                             BorderBrush="{TemplateBinding BorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
                                             CornerRadius="10">
-                                        <TextBlock Text="WYBIERZ AKA" 
+                                        <TextBlock Text="ВЫБРАТЬ АКА" 
                                                    FontSize="28" 
                                                    FontWeight="Bold" 
                                                    Foreground="White"
@@ -157,7 +157,7 @@
                                             BorderBrush="{TemplateBinding BorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
                                             CornerRadius="10">
-                                        <TextBlock Text="WYBIERZ SHIRO" 
+                                        <TextBlock Text="ВЫБРАТЬ СИРО" 
                                                    FontSize="28" 
                                                    FontWeight="Bold" 
                                                    Foreground="#2C3E50"
@@ -242,7 +242,7 @@
                                             BorderBrush="{TemplateBinding BorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
                                             CornerRadius="10">
-                                        <TextBlock Text="POTWIERDZ ZWYCIEZCE" 
+                                        <TextBlock Text="ПОДТВЕРДИТЬ ПОБЕДИТЕЛЯ" 
                                                    FontSize="28" 
                                                    FontWeight="Bold" 
                                                    Foreground="White"

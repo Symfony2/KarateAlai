@@ -1,16 +1,16 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using KarateClassLibrary;
 
 namespace KarateTournament.Api.Contracts;
 
 public sealed record CreateParticipantRequest(
-    [property: Required] string? FirstName,
-    [property: Required] string? LastName,
-    [property: Required, Range(0, int.MaxValue)] int? Age,
+    [property: Required(ErrorMessage = "Имя обязательно.")] string? FirstName,
+    [property: Required(ErrorMessage = "Фамилия обязательна.")] string? LastName,
+    [property: Required(ErrorMessage = "Возраст обязателен."), Range(0, int.MaxValue, ErrorMessage = "Возраст должен быть неотрицательным.")] int? Age,
     string? Club,
-    [property: Required, EnumDataType(typeof(Belts))] Belts? Belt,
-    [property: Required, EnumDataType(typeof(Sex))] Sex? Sex,
-    [property: Required, MinLength(1)] CategoryType[]? CategoryTypes) : IValidatableObject
+    [property: Required(ErrorMessage = "Пояс обязателен."), EnumDataType(typeof(Belts), ErrorMessage = "Недопустимое значение пояса.")] Belts? Belt,
+    [property: Required(ErrorMessage = "Пол обязателен."), EnumDataType(typeof(Sex), ErrorMessage = "Недопустимое значение пола.")] Sex? Sex,
+    [property: Required(ErrorMessage = "Список дисциплин обязателен."), MinLength(1, ErrorMessage = "Укажите хотя бы одну дисциплину.")] CategoryType[]? CategoryTypes) : IValidatableObject
 {
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
@@ -18,11 +18,11 @@ public sealed record CreateParticipantRequest(
         {
             if (CategoryTypes.Any(type => !Enum.IsDefined(type)))
                 yield return new ValidationResult(
-                    "Category types must contain only supported values.", [nameof(CategoryTypes)]);
+                    "Список дисциплин содержит недопустимые значения.", [nameof(CategoryTypes)]);
 
             if (CategoryTypes.Distinct().Count() != CategoryTypes.Length)
                 yield return new ValidationResult(
-                    "Category types must not contain duplicates.", [nameof(CategoryTypes)]);
+                    "Список дисциплин не должен содержать повторов.", [nameof(CategoryTypes)]);
         }
     }
 }

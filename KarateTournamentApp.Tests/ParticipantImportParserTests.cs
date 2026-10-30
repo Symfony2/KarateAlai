@@ -1,4 +1,4 @@
-using KarateClassLibrary;
+﻿using KarateClassLibrary;
 using KarateTournamentApp.Services;
 using Xunit;
 
@@ -68,4 +68,55 @@ public class ParticipantImportParserTests
         Assert.Equal(Belts.Dan, participant.Belt);
         Assert.Equal(CategoryType.Kata, Assert.Single(participant.Categories));
     }
+
+    [Fact]
+    public void ParsesOptionalWeightUsingCommaOrDotDecimalSeparator()
+    {
+        var comma = ParticipantImportParser.TryCreateParticipant(
+            "Jan", "Kowalski", "12", "Kyu8", "Male", ["Kumite"], "Club", "52,5");
+        var dot = ParticipantImportParser.TryCreateParticipant(
+            "Anna", "Nowak", "13", "Kyu7", "Female", ["Kumite"], null, "48.25");
+
+        Assert.Equal(52.5m, comma?.WeightKg);
+        Assert.Equal(48.25m, dot?.WeightKg);
+    }
+
+    [Theory]
+    [InlineData("0")]
+    [InlineData("-2")]
+    [InlineData("abc")]
+    public void RejectsInvalidProvidedWeight(string weight) =>
+        Assert.Null(ParticipantImportParser.TryCreateParticipant(
+            "Jan", "Kowalski", "12", "Kyu8", "Male", ["Kumite"], null, weight));
+    [Fact]
+    public void ParsesRussianExcelDropdownValuesAndPreservesCountry()
+    {
+        var participant = ParticipantImportParser.TryCreateParticipant(
+            "Айбек", "Садыков", "10", "7 кю", "Мужской",
+            ["Кумитэ", "Ката", "Кихон"], "Додзё Ала-Тоо", "32,5", "Кыргызстан");
+
+        Assert.NotNull(participant);
+        Assert.Equal(Belts.Kyu7, participant.Belt);
+        Assert.Equal(Sex.Male, participant.Sex);
+        Assert.Equal(new[] { CategoryType.Kumite, CategoryType.Kata, CategoryType.Kihon }, participant.Categories);
+        Assert.Equal(32.5m, participant.WeightKg);
+        Assert.Equal("Кыргызстан", participant.Country);
+    }
+
+
+    [Fact]
+    public void RejectsTeamDisciplineInIndividualParticipantImport() =>
+        Assert.Null(ParticipantImportParser.TryCreateParticipant(
+            "Jan", "Kowalski", "12", "Kyu8", "Male", ["Командное ката"], null));
+
+    [Fact]
+    public void CountryIsOptionalAndDoesNotBreakLegacyImports()
+    {
+        var participant = ParticipantImportParser.TryCreateParticipant(
+            "Anna", "Nowak", "12", "Kyu8", "Female", ["Kata"], "Club");
+
+        Assert.NotNull(participant);
+        Assert.Null(participant.Country);
+    }
+
 }

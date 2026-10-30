@@ -22,7 +22,7 @@
         <!-- Header -->
         <Border Grid.Row="0" Background="#2C3E50" CornerRadius="5" Padding="15" Margin="0,0,0,20">
             <StackPanel>
-                <TextBlock Text="Panel Sedziowski" 
+                <TextBlock Text="Панель судьи" 
                            FontSize="24" 
                            FontWeight="Bold" 
                            Foreground="White"
@@ -45,13 +45,13 @@
                         Margin="0,0,0,15"
                         Visibility="{Binding IsShobuSanbon, Converter={StaticResource BoolToVisibilityConverter}}">
                     <StackPanel>
-                        <TextBlock Text="Kontrola Shobu Sanbon" 
+                        <TextBlock Text="Управление боем «Сёбу-санбон»" 
                                    FontSize="20" 
                                    FontWeight="Bold"
                                    Margin="0,0,0,20"/>
 
                         <!-- Timer Controls -->
-                        <GroupBox Header="Zarzadzanie Czasem" Padding="10" Margin="0,0,0,15">
+                        <GroupBox Header="Управление временем" Padding="10" Margin="0,0,0,15">
                             <StackPanel>
                                 <Border Background="#2C3E50" CornerRadius="6" Padding="12" Margin="0,0,0,12">
                                     <TextBlock Text="{Binding TimeDisplay}"
@@ -73,7 +73,7 @@
                                             Margin="5"
                                             Cursor="Hand"/>
                                     
-                                    <Button Content="Reset (3:00)" 
+                                    <Button Content="Сброс (3:00)" 
                                             Command="{Binding ResetTimerCommand}"
                                             Background="#3498DB" 
                                             Foreground="White"
@@ -85,9 +85,9 @@
                                 </StackPanel>
 
                                 <!-- Manual Time Set -->
-                                <GroupBox Header="Ustaw Czas Recznie" Padding="10" Background="#ECF0F1">
+                                <GroupBox Header="Установить время вручную" Padding="10" Background="#ECF0F1">
                                     <StackPanel>
-                                        <TextBlock Text="Wpisz czas w sekundach (np. 180) lub format MM:SS (np. 3:00)" 
+                                        <TextBlock Text="Введите время в секундах (например, 180) или в формате ММ:СС (например, 3:00)" 
                                                    FontSize="11"
                                                    Foreground="#7F8C8D"
                                                    TextWrapping="Wrap"
@@ -111,7 +111,7 @@
                                             </TextBox>
                                             
                                             <Button Grid.Column="1"
-                                                    Content="Ustaw"
+                                                    Content="Установить"
                                                     Command="{Binding SetTimeCommand}"
                                                     Background="#9B59B6"
                                                     Foreground="White"
@@ -122,7 +122,7 @@
                                         </Grid>
                                         
                                         <!-- Quick Time Presets -->
-                                        <TextBlock Text="Szybki wybór:" 
+                                        <TextBlock Text="Быстрый выбор:" 
                                                    FontSize="11"
                                                    FontWeight="Bold"
                                                    Margin="0,10,0,5"/>
@@ -176,18 +176,18 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- AKA Controls -->
-                            <GroupBox Grid.Column="1" Header="AKA (Czerwony)" Margin="0,0,10,0" Padding="10">
+                            <GroupBox Grid.Column="1" Header="АКА (красный)" Margin="0,0,10,0" Padding="10">
                                 <StackPanel>
                                     <Border Background="#FDEDEC" BorderBrush="#E74C3C" BorderThickness="1" CornerRadius="5" Padding="10" Margin="0,0,0,15">
                                         <StackPanel>
-                                            <TextBlock Text="Biezacy stan" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                                            <TextBlock Text="{Binding AkaScore, StringFormat=Punkty: {0}}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                                            <TextBlock Text="{Binding AkaAtenai, StringFormat=Atenai: {0}}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
-                                            <TextBlock Text="{Binding AkaChukoku, StringFormat=Chukoku: {0}}" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                            <TextBlock Text="Текущее состояние" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                                            <TextBlock Text="{Binding AkaScore, StringFormat=Очки: {0}}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding AkaAtenai, StringFormat=Атэнай: {0}}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                                            <TextBlock Text="{Binding AkaChukoku, StringFormat=Чукоку: {0}}" HorizontalAlignment="Center" Margin="0,2,0,0"/>
                                         </StackPanel>
                                     </Border>
 
-                                    <TextBlock Text="Punkty (do 6)" FontWeight="Bold" Margin="0,0,0,10"/>
+                                    <TextBlock Text="Очки (до 6)" FontWeight="Bold" Margin="0,0,0,10"/>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                         <Button Content="-" 
                                                 Command="{Binding RemoveAkaPointCommand}"
@@ -212,7 +212,7 @@
                                                 Cursor="Hand"/>
                                     </StackPanel>
 
-                                    <TextBlock Text="Atenai (Hansoku przy 3)" FontWeight="Bold" Margin="0,20,0,10"/>
+                                    <TextBlock Text="Атэнай (Хансоку при 3 нарушениях)" FontWeight="Bold" Margin="0,20,0,10"/>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                         <Button Content="-" 
                                                 Command="{Binding RemoveAkaAtenaiCommand}"
@@ -237,7 +237,7 @@
                                                 Cursor="Hand"/>
                                     </StackPanel>
 
-                                    <TextBlock Text="Chukoku (Hansoku przy 4)" FontWeight="Bold" Margin="0,20,0,10"/>
+                                    <TextBlock Text="Чукоку (Хансоку при 4 нарушениях)" FontWeight="Bold" Margin="0,20,0,10"/>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                         <Button Content="-" 
                                                 Command="{Binding RemoveAkaChukokuCommand}"
@@ -265,18 +265,18 @@
                             </GroupBox>
 
                             <!-- SHIRO Controls -->
-                            <GroupBox Grid.Column="0" Header="SHIRO (Bialy)" Margin="10,0,0,0" Padding="10">
+                            <GroupBox Grid.Column="0" Header="СИРО (белый)" Margin="10,0,0,0" Padding="10">
                                 <StackPanel>
                                     <Border Background="#F8F9F9" BorderBrush="#95A5A6" BorderThickness="1" CornerRadius="5" Padding="10" Margin="0,0,0,15">
                                         <StackPanel>
-                                            <TextBlock Text="Biezacy stan" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                                            <TextBlock Text="{Binding ShiroScore, StringFormat=Punkty: {0}}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                                            <TextBlock Text="{Binding ShiroAtenai, StringFormat=Atenai: {0}}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
-                                            <TextBlock Text="{Binding ShiroChukoku, StringFormat=Chukoku: {0}}" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                            <TextBlock Text="Текущее состояние" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                                            <TextBlock Text="{Binding ShiroScore, StringFormat=Очки: {0}}" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding ShiroAtenai, StringFormat=Атэнай: {0}}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                                            <TextBlock Text="{Binding ShiroChukoku, StringFormat=Чукоку: {0}}" HorizontalAlignment="Center" Margin="0,2,0,0"/>
                                         </StackPanel>
                                     </Border>
 
-                                    <TextBlock Text="Punkty (do 6)" FontWeight="Bold" Margin="0,0,0,10"/>
+                                    <TextBlock Text="Очки (до 6)" FontWeight="Bold" Margin="0,0,0,10"/>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                         <Button Content="-" 
                                                 Command="{Binding RemoveShiroPointCommand}"
@@ -301,7 +301,7 @@
                                                 Cursor="Hand"/>
                                     </StackPanel>
 
-                                    <TextBlock Text="Atenai (Hansoku przy 3)" FontWeight="Bold" Margin="0,20,0,10"/>
+                                    <TextBlock Text="Атэнай (Хансоку при 3 нарушениях)" FontWeight="Bold" Margin="0,20,0,10"/>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                         <Button Content="-" 
                                                 Command="{Binding RemoveShiroAtenaiCommand}"
@@ -326,7 +326,7 @@
                                                 Cursor="Hand"/>
                                     </StackPanel>
 
-                                    <TextBlock Text="Chukoku (Hansoku przy 4)" FontWeight="Bold" Margin="0,20,0,10"/>
+                                    <TextBlock Text="Чукоку (Хансоку при 4 нарушениях)" FontWeight="Bold" Margin="0,20,0,10"/>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                         <Button Content="-" 
                                                 Command="{Binding RemoveShiroChukokuCommand}"
@@ -363,12 +363,12 @@
                         Margin="0,0,0,15"
                         Visibility="{Binding IsShobuSanbon, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                     <StackPanel>
-                        <TextBlock Text="Panel Oceny Sedziow" 
+                        <TextBlock Text="Панель оценок судей" 
                                    FontSize="20" 
                                    FontWeight="Bold"
                                    Margin="0,0,0,20"/>
                         
-                        <TextBlock Text="Funkcjonalnosc oceny przez sedziow zostanie dodana wkrotce..."
+                        <TextBlock Text="Функция выставления оценок судьями будет добавлена позже..."
                                    FontStyle="Italic"
                                    Foreground="#7f8c8d"
                                    TextAlignment="Center"
@@ -381,7 +381,7 @@
         <!-- Match Control Buttons -->
         <Border Grid.Row="2" Background="White" CornerRadius="5" Padding="15" Margin="0,15,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Zakoncz walke" 
+                <Button Content="Завершить поединок" 
                         Command="{Binding FinishMatchCommand}"
                         Background="#9B59B6" 
                         Foreground="White"
@@ -391,7 +391,7 @@
                         Margin="10"
                         Cursor="Hand"/>
                 
-                <Button Content="Nastepna walka" 
+                <Button Content="Следующий поединок" 
                         Command="{Binding NextMatchCommand}"
                         Background="#1ABC9C" 
                         Foreground="White"

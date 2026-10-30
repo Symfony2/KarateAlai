@@ -53,7 +53,7 @@ namespace KarateTournamentApp.ViewModels
 
         public bool IsTimerRunning => _competitionManager.CurrentMatch is ShobuSanbonMatch match && match.IsRunning;
 
-        public string TimerToggleText => IsTimerRunning ? "Stop" : "Start";
+        public string TimerToggleText => IsTimerRunning ? "Стоп" : "Старт";
 
         public string TimeDisplay
         {
@@ -233,8 +233,8 @@ namespace KarateTournamentApp.ViewModels
                 
                 // Invalid input
                 _dialogService.ShowMessage(
-                    "Nieprawidłowy format czasu!\nUżyj sekund (np. 180) lub MM:SS (np. 3:00)",
-                    "Błąd",
+                    "Неверный формат времени!\nУкажите секунды (например, 180) или формат ММ:СС (например, 3:00).",
+                    "Ошибка",
                     DialogButtons.Ok,
                     DialogIcon.Warning);
             }

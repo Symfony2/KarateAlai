@@ -1,4 +1,4 @@
-using KarateTournament.Api.Data;
+﻿using KarateTournament.Api.Data;
 using KarateTournament.Api.Endpoints;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +10,7 @@ var connectionString = builder.Configuration.GetConnectionString("TournamentData
 if (string.IsNullOrWhiteSpace(connectionString))
 {
     throw new InvalidOperationException(
-        "Configure ConnectionStrings:TournamentDatabase using user secrets or the ConnectionStrings__TournamentDatabase environment variable.");
+        "Настройте ConnectionStrings:TournamentDatabase через user secrets или переменную окружения ConnectionStrings__TournamentDatabase.");
 }
 
 builder.Services.AddDbContext<TournamentDbContext>(options =>
@@ -23,7 +23,7 @@ await using (var scope = app.Services.CreateAsyncScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<TournamentDbContext>();
     if (await dbContext.Database.EnsureCreatedAsync())
     {
-        app.Logger.LogInformation("Created the tournament database schema.");
+        app.Logger.LogInformation("Создана схема базы данных турнира.");
     }
 }
 
@@ -45,9 +45,9 @@ app.MapGet("/health/database", async (
 {
     if (!await dbContext.Database.CanConnectAsync(cancellationToken))
     {
-        logger.LogWarning("PostgreSQL connectivity check failed.");
+        logger.LogWarning("Проверка подключения к PostgreSQL не пройдена.");
         return Results.Problem(
-            title: "Database unavailable",
+            title: "База данных недоступна",
             statusCode: StatusCodes.Status503ServiceUnavailable);
     }
 

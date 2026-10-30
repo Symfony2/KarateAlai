@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -34,7 +34,7 @@ namespace KarateTournamentApp.Services.Navigation
         {
             if (string.IsNullOrWhiteSpace(key))
             {
-                throw new ArgumentException("A window key is required.", nameof(key));
+                throw new ArgumentException("Необходимо указать ключ окна.", nameof(key));
             }
 
             if (_reusableWindows.TryGetValue(key, out var existingHandle) && !existingHandle.IsClosed)
@@ -99,7 +99,7 @@ namespace KarateTournamentApp.Services.Navigation
         {
             if (!_viewFactories.TryGetValue(viewModel.GetType(), out var factory))
             {
-                throw new InvalidOperationException($"No view registered for {viewModel.GetType().Name}");
+                throw new InvalidOperationException($"Для модели представления {viewModel.GetType().Name} не зарегистрировано представление.");
             }
 
             var content = factory();
@@ -161,7 +161,7 @@ namespace KarateTournamentApp.Services.Navigation
 
             return screens.Count > 0
                 ? screens[0]
-                : throw new InvalidOperationException("No display monitor is available.");
+                : throw new InvalidOperationException("Не удалось найти доступный монитор.");
         }
 
         private static List<MonitorBounds> EnumerateMonitors()
@@ -195,7 +195,7 @@ namespace KarateTournamentApp.Services.Navigation
 
             if (enumerationError != null)
             {
-                throw new InvalidOperationException("Could not read display monitor information.", enumerationError);
+                throw new InvalidOperationException("Не удалось получить сведения о мониторе.", enumerationError);
             }
 
             if (!succeeded)

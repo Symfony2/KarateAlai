@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Text.Json;
 using KarateClassLibrary;
 using KarateTournamentApp.Models;
@@ -15,7 +15,7 @@ public class JsonServiceTests : IDisposable
     public void Dispose() => File.Delete(_file);
 
     private static Participant Person() =>
-        new("Łukasz", "Żółć", 12, Belts.Kyu8, Sex.Male, [CategoryType.Kata], "Łódź") { Id = 42 };
+        new("Łukasz", "Żółć", 12, Belts.Kyu8, Sex.Male, [CategoryType.Kata], "Łódź", "Кыргызстан") { Id = 42 };
 
     private async Task<Category> RoundTrip(Category category)
     {
@@ -59,6 +59,7 @@ public class JsonServiceTests : IDisposable
         Assert.Equal("Łukasz", restoredPerson.FirstName);
         Assert.Equal("Żółć", restoredPerson.LastName);
         Assert.Equal("Łódź", restoredPerson.Club);
+        Assert.Equal("Кыргызстан", restoredPerson.Country);
         Assert.Same(restoredPerson, restoredResult.Participant);
         Assert.Equal(24.6m, restoredResult.Score);
         Assert.Equal(category.FinalResults[0].JudgeScores, restoredResult.JudgeScores);
@@ -94,6 +95,32 @@ public class JsonServiceTests : IDisposable
         Assert.True(match.HasSenshuAka);
         Assert.True(match.IsInOvertime);
         Assert.Equal(2, match.OvertimeCount);
+    }
+
+    [Fact]
+    public async Task ThirdPlaceBoutAndShobuStateSurviveSaveAndLoad()
+    {
+        var category = new ShobuSanbonCategory
+        {
+            Participants = [Person(), new Participant("Ivan", "Test", 12, Belts.Kyu8, Sex.Male, [CategoryType.Kumite]) { Id = 43 }],
+            ThirdPlaceMatch = new ShobuSanbonMatch
+            {
+                Id = 17, Aka = 42, Shiro = 43, WinnerId = 42,
+                AkaScore = 3, ShiroScore = 1, IsFinished = true,
+                TimeRemaining = 12.5, IsInOvertime = true, OvertimeCount = 1
+            }
+        };
+
+        var loaded = Assert.IsType<ShobuSanbonCategory>(await RoundTrip(category));
+        var bronze = Assert.IsType<ShobuSanbonMatch>(loaded.ThirdPlaceMatch);
+        Assert.Equal(17, bronze.Id);
+        Assert.Equal(42, bronze.Aka);
+        Assert.Equal(43, bronze.Shiro);
+        Assert.Equal(42, bronze.WinnerId);
+        Assert.True(bronze.IsFinished);
+        Assert.Equal(12.5, bronze.TimeRemaining);
+        Assert.True(bronze.IsInOvertime);
+        Assert.Equal(1, bronze.OvertimeCount);
     }
 
     [Fact]

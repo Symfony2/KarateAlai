@@ -17,7 +17,7 @@
         <!-- Header -->
         <Border Grid.Row="0" Background="#2C3E50" CornerRadius="5" Padding="15" Margin="0,0,0,20">
             <StackPanel>
-                <TextBlock Text="Panel Sedziowski" 
+                <TextBlock Text="Панель судьи" 
                            FontSize="24" 
                            FontWeight="Bold" 
                            Foreground="White"
@@ -36,7 +36,7 @@
                 <!-- Current Participant Info -->
                 <Border Background="White" CornerRadius="5" Padding="20" Margin="0,0,0,15">
                     <StackPanel>
-                        <TextBlock Text="Aktualny zawodnik" 
+                        <TextBlock Text="Текущий спортсмен" 
                                    FontSize="16" 
                                    Foreground="#7f8c8d"
                                    Margin="0,0,0,10"/>
@@ -53,7 +53,7 @@
                                 Padding="15"
                                 Visibility="{Binding IsParticipantFinished, Converter={StaticResource BoolToVisibilityConverter}}">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBlock Text="Wynik koncowy (suma): " 
+                                <TextBlock Text="Итоговый балл (сумма): " 
                                            FontSize="24" 
                                            FontWeight="SemiBold"
                                            Foreground="#27AE60"
@@ -72,13 +72,13 @@
                 <!-- Score Entry Panel -->
                 <Border Background="White" CornerRadius="5" Padding="20" Margin="0,0,0,15">
                     <StackPanel>
-                        <TextBlock Text="Wprowadzanie ocen sedziow" 
+                        <TextBlock Text="Ввод оценок судей" 
                                    FontSize="20" 
                                    FontWeight="Bold"
                                    Margin="0,0,0,20"/>
 
                         <!-- Manual Score Entry -->
-                        <GroupBox Header="Wprowadz ocene" Padding="15" Margin="0,0,0,15">
+                        <GroupBox Header="Введите оценку" Padding="15" Margin="0,0,0,15">
                             <StackPanel>
                                 <TextBox x:Name="ScoreTextBox"
                                          Text="{Binding ScoreInput, UpdateSourceTrigger=PropertyChanged}" 
@@ -89,7 +89,7 @@
                                         <KeyBinding Key="Return" Command="{Binding AddScoreCommand}"/>
                                     </TextBox.InputBindings>
                                 </TextBox>
-                                <Button Content="Dodaj ocene" 
+                                <Button Content="Добавить оценку" 
                                         Command="{Binding AddScoreCommand}"
                                         Background="#3498DB"
                                         Foreground="White"
@@ -101,7 +101,7 @@
                         </GroupBox>
 
                         <!-- Current Judge Scores -->
-                        <GroupBox Header="Oceny sedziow" Padding="15" Margin="0,15,0,0">
+                        <GroupBox Header="Оценки судей" Padding="15" Margin="0,15,0,0">
                             <StackPanel>
                                 <ItemsControl ItemsSource="{Binding JudgeScores}">
                                     <ItemsControl.ItemsPanel>
@@ -125,7 +125,7 @@
                                 </ItemsControl>
                                 
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
-                                    <Button Content="Pokaz wynik koncowy" 
+                                    <Button Content="Показать итоговый балл" 
                                             Command="{Binding ShowFinalScoreCommand}"
                                             Background="#F39C12"
                                             Foreground="White"
@@ -134,7 +134,7 @@
                                             Margin="0,0,10,0"
                                             Cursor="Hand"/>
                                     
-                                    <Button Content="Usun ostatnia ocene" 
+                                    <Button Content="Удалить последнюю оценку" 
                                             Command="{Binding RemoveLastScoreCommand}"
                                             Background="#E74C3C"
                                             Foreground="White"
@@ -152,7 +152,7 @@
         <!-- Control Buttons -->
         <Border Grid.Row="2" Background="White" CornerRadius="5" Padding="15" Margin="0,15,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Nastepny zawodnik" 
+                <Button Content="Следующий спортсмен" 
                         Command="{Binding FinishParticipantCommand}"
                         Background="#27AE60" 
                         Foreground="White"
@@ -162,7 +162,7 @@
                         Margin="10"
                         Cursor="Hand"/>
                 
-                <Button Content="Pokaz wyniki" 
+                <Button Content="Показать результаты" 
                         Command="{Binding ShowResultsCommand}"
                         Background="#9B59B6" 
                         Foreground="White"

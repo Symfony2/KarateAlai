@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using KarateTournamentApp.Services.Dialogs;
@@ -20,19 +20,19 @@ namespace KarateTournamentApp.Services
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
-                throw new ArgumentException("An export file path is required.", nameof(filePath));
+                throw new ArgumentException("Не указан путь к файлу экспорта.", nameof(filePath));
             }
 
             try
             {
                 await _jsonService.SaveTournamentDataAsync(filePath, categoryManager.DefinedCategories);
-                _dialogService.ShowMessage($"Pomyślnie wyeksportowano {categoryManager.DefinedCategories.Count} kategorii!",
-                    "Export zakończony", DialogButtons.Ok, DialogIcon.Information);
+                _dialogService.ShowMessage($"Успешно экспортировано категорий: {categoryManager.DefinedCategories.Count}.",
+                    "Экспорт завершён", DialogButtons.Ok, DialogIcon.Information);
             }
             catch (Exception ex)
             {
-                _dialogService.ShowMessage($"Błąd podczas exportu danych:\n{ex.Message}",
-                    "Błąd", DialogButtons.Ok, DialogIcon.Error);
+                _dialogService.ShowMessage($"Ошибка при экспорте данных:\n{ex.Message}",
+                    "Ошибка", DialogButtons.Ok, DialogIcon.Error);
             }
         }
     }

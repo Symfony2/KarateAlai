@@ -1,11 +1,11 @@
-@KarateTournament.Api_HostAddress = https://localhost:7086
+﻿@KarateTournament.Api_HostAddress = https://localhost:7086
 
 GET {{KarateTournament.Api_HostAddress}}/api/categories
 Accept: application/json
 
 ###
 
-# Replace with an existing category ID (also returned in POST Location).
+# Укажите существующий ID категории (он также возвращается в заголовке Location после POST).
 GET {{KarateTournament.Api_HostAddress}}/api/categories/1
 Accept: application/json
 
@@ -20,10 +20,10 @@ POST {{KarateTournament.Api_HostAddress}}/api/participants
 Content-Type: application/json
 
 {
-  "firstName": "Jan",
-  "lastName": "Kowalski",
+  "firstName": "Иван",
+  "lastName": "Смирнов",
   "age": 12,
-  "club": "Klub Karate",
+  "club": "Клуб карате",
   "belt": 8,
   "sex": 1,
   "categoryTypes": [0, 1]
@@ -31,18 +31,18 @@ Content-Type: application/json
 
 ###
 
-# Replace with the ID returned by POST (Location header).
+# Укажите ID, возвращённый в заголовке Location после POST.
 GET {{KarateTournament.Api_HostAddress}}/api/participants/1
 Accept: application/json
 
 ###
 
-# Replace participantIds with IDs returned by participant creation, or use [].
+# Укажите в participantIds ID созданных спортсменов или оставьте пустой массив [].
 POST {{KarateTournament.Api_HostAddress}}/api/categories
 Content-Type: application/json
 
 {
-  "name": "Kata 10-12",
+  "name": "Ката 10–12 лет",
   "minAge": 10,
   "maxAge": 12,
   "sex": 3,

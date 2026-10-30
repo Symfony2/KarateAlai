@@ -1,4 +1,4 @@
-namespace KarateTournamentApp.Models
+﻿namespace KarateTournamentApp.Models
 {
     internal static class LocalIdGenerator
     {
@@ -9,7 +9,7 @@ namespace KarateTournamentApp.Models
             var id = Interlocked.Increment(ref _lastId);
             if (id > int.MaxValue)
             {
-                throw new InvalidOperationException("The local tournament ID range has been exhausted.");
+                throw new InvalidOperationException("Исчерпан диапазон локальных идентификаторов турнира.");
             }
 
             return (int)id;

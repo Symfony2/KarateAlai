@@ -38,6 +38,7 @@ namespace KarateTournamentApp
         private static void RegisterViews(IWindowService windowService)
         {
             windowService.Register<ScoreboardViewModel, ScoreboardView>();
+            windowService.Register<BracketPreviewViewModel, BracketPreviewView>();
             windowService.Register<ScoreboardJudgeViewModel, ScoreboardJudge>();
             windowService.Register<IndividualScoreboardViewModel, IndividualScoreboardView>();
             windowService.Register<IndividualJudgeViewModel, IndividualJudgeView>();

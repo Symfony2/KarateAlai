@@ -59,7 +59,7 @@
                             BorderBrush="#3498DB" 
                             BorderThickness="3">
                         <StackPanel>
-                            <TextBlock Text="OCENY SEDZIOW" 
+                            <TextBlock Text="ОЦЕНКИ СУДЕЙ" 
                                        FontSize="32" 
                                        Foreground="#2C3E50"
                                        FontWeight="Bold"
@@ -99,7 +99,7 @@
                             BorderBrush="#229954"
                             BorderThickness="3">
                         <StackPanel>
-                            <TextBlock Text="WYNIK KONCOWY (SUMA)" 
+                            <TextBlock Text="ИТОГОВЫЙ БАЛЛ (СУММА)" 
                                        FontSize="30" 
                                        Foreground="White"
                                        FontWeight="Bold"
@@ -118,7 +118,7 @@
 
         <!-- Footer -->
         <Border Grid.Row="2" Background="#34495E" Padding="15">
-            <TextBlock Text="Karate Tournament Manager - Individual Competition" 
+            <TextBlock Text="Менеджер турнира по карате — индивидуальное соревнование" 
                        FontSize="20" 
                        Foreground="#ECF0F1"
                        FontWeight="SemiBold"

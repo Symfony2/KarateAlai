@@ -1,4 +1,4 @@
-using KarateTournamentApp.Models;
+﻿using KarateTournamentApp.Models;
 using KarateTournamentApp.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -22,77 +22,53 @@ namespace KarateTournamentApp.Services
             _excelImportService = new ExcelImportService();
         }
 
-        public Task ImportParticipantsFromExcelAsync(
+        public async Task<int> ImportParticipantsFromExcelAsync(
             string filePath,
-            CategoryManager categoryManager,
-            ObservableCollection<Participant> allParticipants,
-            bool divideByBelt,
-            bool divideByAge)
-        {
-            return ImportParticipantsAsync(
-                filePath,
-                categoryManager,
-                allParticipants,
-                divideByBelt,
-                divideByAge,
-                "Excel",
-                _excelImportService.ImportParticipantsFromExcelAsync);
-        }
-
-        private async Task ImportParticipantsAsync(
-            string filePath,
-            CategoryManager categoryManager,
-            ObservableCollection<Participant> allParticipants,
-            bool divideByBelt,
-            bool divideByAge,
-            string formatName,
-            Func<string, Task<List<Participant>>> importParticipants)
+            ObservableCollection<Participant> allParticipants)
         {
             if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentException("Не указан путь к файлу импорта.", nameof(filePath));
+
+            var importResult = await _excelImportService.ImportParticipantsFromExcelAsync(filePath);
+            if (importResult.Participants.Count == 0)
             {
-                throw new ArgumentException("An import file path is required.", nameof(filePath));
+                _dialogService.ShowMessage(
+                    $"В файле нет корректных данных спортсменов.\n" +
+                    $"Некорректных строк: {importResult.InvalidRows} из {importResult.TotalRows}.",
+                    "Импорт не выполнен", DialogButtons.Ok, DialogIcon.Warning);
+                return 0;
             }
 
-            try
+            var addedCount = 0;
+            foreach (var participant in importResult.Participants)
             {
-                var importedParticipants = await importParticipants(filePath);
+                var isDuplicate = allParticipants.Any(existing =>
+                    string.Equals(existing.FirstName?.Trim(), participant.FirstName?.Trim(), StringComparison.OrdinalIgnoreCase)
+                    && string.Equals(existing.LastName?.Trim(), participant.LastName?.Trim(), StringComparison.OrdinalIgnoreCase));
 
-                if (importedParticipants != null && importedParticipants.Any())
-                {
-                    int addedCount = 0;
-                    foreach (var participant in importedParticipants)
-                    {
-                        if (!allParticipants.Any(p => p.FirstName == participant.FirstName && p.LastName == participant.LastName))
-                        {
-                            categoryManager.AssignParticipant(participant, divideByBelt, divideByAge);
-                            allParticipants.Add(participant);
-                            addedCount++;
-                        }
-                    }
+                if (isDuplicate) continue;
 
-                    _dialogService.ShowMessage($"Successfully imported {addedCount} of {importedParticipants.Count} participants!\n\n" +
-                        $"Skipped: {importedParticipants.Count - addedCount} (duplicates or invalid data)",
-                        "Import Completed", DialogButtons.Ok, DialogIcon.Information);
-                }
-                else
-                {
-                    _dialogService.ShowMessage("File does not contain any valid participant data.",
-                        "Error", DialogButtons.Ok, DialogIcon.Warning);
-                }
+                allParticipants.Add(participant);
+                addedCount++;
             }
-            catch (Exception ex)
-            {
-                _dialogService.ShowMessage($"Error importing data from {formatName}:\n{ex.Message}",
-                    "Error", DialogButtons.Ok, DialogIcon.Error);
-            }
+
+            var duplicateCount = importResult.Participants.Count - addedCount;
+            var skippedCount = duplicateCount + importResult.InvalidRows;
+            _dialogService.ShowMessage(
+                $"Добавлено спортсменов: {addedCount} из {importResult.TotalRows}.\n" +
+                $"Пропущено всего: {skippedCount}.\n" +
+                $"Дубликаты: {duplicateCount}; некорректные строки: {importResult.InvalidRows}.",
+                "Импорт завершён", DialogButtons.Ok, DialogIcon.Information);
+
+            return addedCount;
         }
 
         public async Task CreateSampleExcelFileAsync()
         {
             var filePath = _dialogService.ShowSaveFileDialog(
-                "Save Excel Template",
-                "Excel files (*.xlsx)|*.xlsx",
-                "participants_template.xlsx");
+                "Сохранение шаблона Excel",
+                "Файлы Excel (*.xlsx)|*.xlsx",
+                "Шаблон_участников.xlsx");
             if (filePath == null)
             {
                 return;
@@ -101,13 +77,13 @@ namespace KarateTournamentApp.Services
             try
             {
                 await _excelImportService.CreateSampleExcelFileAsync(filePath);
-                _dialogService.ShowMessage($"Excel template has been saved!\n\nPath: {filePath}",
-                    "Success", DialogButtons.Ok, DialogIcon.Information);
+                _dialogService.ShowMessage($"Шаблон Excel сохранён.\n\nПуть: {filePath}",
+                    "Успешно", DialogButtons.Ok, DialogIcon.Information);
             }
             catch (Exception ex)
             {
-                _dialogService.ShowMessage($"Error creating template:\n{ex.Message}",
-                    "Error", DialogButtons.Ok, DialogIcon.Error);
+                _dialogService.ShowMessage($"Ошибка при создании шаблона:\n{ex.Message}",
+                    "Ошибка", DialogButtons.Ok, DialogIcon.Error);
             }
         }
 
@@ -118,7 +94,7 @@ namespace KarateTournamentApp.Services
         {
             if (string.IsNullOrWhiteSpace(filePath))
             {
-                throw new ArgumentException("An import file path is required.", nameof(filePath));
+                throw new ArgumentException("Не указан путь к файлу импорта.", nameof(filePath));
             }
 
             try
@@ -142,19 +118,19 @@ namespace KarateTournamentApp.Services
                         }
                     }
 
-                    _dialogService.ShowMessage($"Successfully imported {importedCategories.Count} categories and {allParticipants.Count} participants!",
-                        "Import Completed", DialogButtons.Ok, DialogIcon.Information);
+                    _dialogService.ShowMessage($"Импортировано категорий: {importedCategories.Count}; спортсменов: {allParticipants.Count}.",
+                        "Импорт завершён", DialogButtons.Ok, DialogIcon.Information);
                 }
                 else
                 {
-                    _dialogService.ShowMessage("File does not contain any data.",
-                        "Error", DialogButtons.Ok, DialogIcon.Warning);
+                    _dialogService.ShowMessage("В файле нет данных.",
+                        "Ошибка", DialogButtons.Ok, DialogIcon.Warning);
                 }
             }
             catch (Exception ex)
             {
-                _dialogService.ShowMessage($"Error importing data:\n{ex.Message}",
-                    "Error", DialogButtons.Ok, DialogIcon.Error);
+                _dialogService.ShowMessage($"Ошибка при импорте данных:\n{ex.Message}",
+                    "Ошибка", DialogButtons.Ok, DialogIcon.Error);
             }
         }
     }

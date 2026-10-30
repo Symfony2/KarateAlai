@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using KarateTournamentApp.Models;
@@ -77,7 +77,7 @@ namespace KarateTournamentApp.ViewModels
             var resultsViewModel = new ResultsViewModel(_competitionManager);
             _windowService.ShowDialog(resultsViewModel, new WindowOptions
             {
-                Title = $"Wyniki - {CategoryName}",
+                Title = $"Результаты — {CategoryName}",
                 Width = 800,
                 Height = 600
             });

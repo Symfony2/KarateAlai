@@ -1,5 +1,6 @@
-using System;
+﻿using System;
 using KarateTournamentApp.Models;
+using KarateTournamentApp.Localization;
 
 namespace KarateTournamentApp.ViewModels
 {
@@ -13,7 +14,7 @@ namespace KarateTournamentApp.ViewModels
         public IndividualCompetitionManagerViewModel CompetitionManager => _competitionManager;
 
         public string CategoryName => _competitionManager.Category.Name;
-        public string CategoryType => _competitionManager.Category.CategoryType.ToString();
+        public string CategoryType => RussianText.CategoryType(_competitionManager.Category.CategoryType);
 
         public string CurrentParticipantName => _competitionManager.CurrentParticipant?.FullName ?? "---";
         public string CurrentParticipantClub => _competitionManager.CurrentParticipant?.Club ?? "";
